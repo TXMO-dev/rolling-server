@@ -9,6 +9,9 @@
   "author": "Timothy Asigbey",
   "license": "ISC",
   "dependencies": {
-    "apollo-server": "^2.16.1"
+    "apollo-server": "^2.16.1",
+    "dotenv": "^8.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.0"
   }
 }
