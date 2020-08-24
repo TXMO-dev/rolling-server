@@ -6,19 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/TXMO-dev/rolling-server.git"
-  },
-  "keywords": [
-    "Server",
-    "Application",
-    "git"
-  ],
+
+ 
   "author": "Timothy Asigbey",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/TXMO-dev/rolling-server/issues"
-  },
-  "homepage": "https://github.com/TXMO-dev/rolling-server#readme"
+  "license": "ISC"
+
 }
