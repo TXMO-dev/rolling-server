@@ -1,17 +1,21 @@
 
 let error = {}
-const email = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
-exports.validateRegistration = (full_name,email,username,password,confirmpassword,roles,createdAt) => {
 
+exports.validateRegistration = (full_name,email,username,password,confirmpassword,roles) => {
+    const Email = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     if(full_name.trim() === ''){
         error.full_name = 'Full name must not be Empty'
     }
 
     if(email.trim() === ''){
         error.email = 'email must not be Empty'
-    } else if(!email.match(email)){
+    } else if(!email.match(Email)){
         error.email = 'please enter your email correctly'
+    }
+
+    if(confirmpassword.trim() === ''){
+        error.confirmpassword = 'confirm password cannot be empty'
     }
 
     if(password.trim() === ''){
@@ -22,7 +26,7 @@ exports.validateRegistration = (full_name,email,username,password,confirmpasswor
 
     if(roles.trim() === ''){
         error.roles = 'roles must not be empty'
-    }else if(roles.trim() !== 'User' || roles.trim() !== 'Dealer'){
+    }else if((roles.trim() !== 'User') || (roles.trim() !== 'Dealer')){ // FIXME this isnt working will work on it later
         error.roles = 'You must either be a User or a Dealer'
     }
     
@@ -39,17 +43,15 @@ exports.validateRegistration = (full_name,email,username,password,confirmpasswor
 }
 
 exports.validateLogin = (email,password) => {
-
+    const Email = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     if(email.trim() === ''){
         error.email = 'Email must not be empty'
-    }else if(!email.match(email)){
+    }else if(!email.match(Email)){
         error.email = 'please enter your email correctly'
     }
 
     if(password.trim() === ''){
         error.password = 'Password must not be empty'
-    }else if(password !== confirmpassword){
-        error.password = 'passwords do not match'
     }
 
     return {

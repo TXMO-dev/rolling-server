@@ -1,4 +1,9 @@
 const {gql} = require('apollo-server');
+const express = require('express');
+const hpp = require('hpp');
+const app = express();
+
+app.use(hpp());
 
 
 const typeDefs = gql`
@@ -18,6 +23,9 @@ const typeDefs = gql`
         description:String
         license_file:String
         starred:[Star]
+        passwordResetToken:String
+        passwordResetCreatedAt:String
+        passwordResetTokenExp:String
         createdAt:String!
     }
 
@@ -70,13 +78,23 @@ const typeDefs = gql`
         password: String!
     }
 
+    input ResetChangeInput{
+        reset_token:String!
+        new_password:String!
+        confirm_new_password:String!
+    }
+
     type Mutation{
         register(registerInput:RegisterInput): User
         login(loginInput:LoginInput): User
+        resetPassword(email:String!): User
+        resetChangePassword(resetChangeInput:ResetChangeInput): User
     }
 
     type Query{
         getUsers: [User]
+        getMe: User
+        getUser(userId:String!): User
     }
 
 `;

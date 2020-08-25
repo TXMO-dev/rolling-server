@@ -1,13 +1,10 @@
-const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const {ApolloServer} = require('apollo-server')
 const typeDefs = require('./graphql/typeDefs/typeDefs');
 const resolvers = require('./graphql/resolvers');
-const hpp = require('hpp');
 
-const app = express();
-app.use(hpp());
+
 
 dotenv.config({path:'./config.env'});
 
@@ -16,7 +13,8 @@ const DB = process.env.MONGODB_ATLAS.replace('<password>',process.env.MONGODB_PA
 
 const server = new ApolloServer({
     typeDefs,
-    resolvers
+    resolvers,
+    context:({req}) => ({req})
 
 })
 

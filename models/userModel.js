@@ -18,7 +18,10 @@ const userSchema = new Schema({
             username:String,
             createdAt:String
         }
-    ]
+    ],
+    passwordResetToken:String,
+    passwordResetCreatedAt:String,
+    passwordResetTokenExp:String
 })
 
 const User = model('User',userSchema);
