@@ -26,7 +26,11 @@ const typeDefs = gql`
         passwordResetToken:String
         passwordResetCreatedAt:String
         passwordResetTokenExp:String
-        createdAt:String!
+        createdAt:String!   
+        active:Boolean!
+        verified:Boolean!
+        license_check:Boolean!
+        license_send:Boolean!
     }
 
     type Star{
@@ -84,11 +88,28 @@ const typeDefs = gql`
         confirm_new_password:String!
     }
 
+    input UpdateInput{
+        current_password:String!
+        new_password:String!
+        confirm_new_password:String!
+    }
+
+    input ProfileUpdate{
+        full_name:String
+        username:String
+        email:String
+        description:String
+        license_file:String
+    }
+
     type Mutation{
         register(registerInput:RegisterInput): User
         login(loginInput:LoginInput): User
         resetPassword(email:String!): User
         resetChangePassword(resetChangeInput:ResetChangeInput): User
+        deleteAccount: User
+        updateMyPassword(updateInput:UpdateInput): User 
+        updateMyProfile(profileUpdate:ProfileUpdate): User
     }
 
     type Query{

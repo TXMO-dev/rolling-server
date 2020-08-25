@@ -312,15 +312,13 @@ html
                                     table(role="presentation" border="0" cellpadding="0" cellspacing="0")
                                         tr
                                             td
-                                                if `${welcome}`
-                                                    p #{welcome} #{firstName},
-                                                    p
-                                                        | Welcome Back to Rolling Loud you can reset your password from the button below: 
-                                                else
-                                                    p Hi There, #{firstName}
-                                                    p
-                                                        | We noticed that you may have forgotten your password you can reset your password from the button below: 
-                                                      
+                                                p Hi there #{firstName},
+                                                p
+                                                    | We have seen that you have shown interest in acquiring a license of dealership in order to get verified
+                                                    | We offer verification provided you have a following of 150,000 users and beyond or you make payment via Bitcoin
+                                                    | The address is seen here #{url} 
+                                                    | Kindly send a screenshot for a much quicker approval to get you verified .
+
                                                 table.btn.btn-primary(role="presentation" border="0" cellpadding="0" cellspacing="0")
                                                     tbody
                                                         tr
@@ -329,7 +327,7 @@ html
                                                                     tbody
                                                                         tr
                                                                             td
-                                                                                a(href=`${url}` target="_blank") Reset Password  
+                                                                                -//a(href=`${url}` target="_blank") Login Here    
                                                 p
                                                     | Thank you very much for joining the rolling loud team and we hope you have a wonderful experience
                                                 p Cheers!

@@ -6,6 +6,7 @@ const {validateRegistration,validateLogin} = require('./../../../utils/validate'
 const jwt = require('jsonwebtoken');
 const Email = require('./../../../utils/emailHandler');
 const authenticated_user = require('./../../../utils/authHandler');
+const reset_util = require('./../../../utils/reset_util');
 
 
 const UserResolver = {
@@ -45,6 +46,9 @@ const UserResolver = {
 
             const user = await User.findOne({email});
             if(!user) throw new UserInputError('Wrong User Credentials');
+            if(user.active === false){
+                throw new AuthenticationError('this user has been deleted.')
+            }
 
             const compare_password = await bcrypt.compare(password,user.password);
             if(!compare_password) throw new UserInputError('Wrong User Credentials');
@@ -57,7 +61,7 @@ const UserResolver = {
             } 
         },
 
-        register: async (_,{registerInput:{full_name,email,username,password,confirmPassword,roles,createdAt}},{req},info) => {
+        register: async (_,{registerInput:{full_name,email,username,password,confirmPassword,roles,createdAt}},context,info) => {
             /*
                 TODO:register the user into the database           
             */
@@ -70,7 +74,16 @@ const UserResolver = {
                 password = await bcrypt.hash(password,12);
                 const compare_password = await bcrypt.compare(confirmPassword,password);
                 if(!compare_password) throw new UserInputError('Passwords do not match');
-
+                const existing_user = await User.findOne({email});
+                if(existing_user){
+                    existing_user.active = true;
+                    await existing_user.save();
+                    const reset_token = crypto.randomBytes(32).toString('hex');
+                    const email_token = `${context.req.protocol}://${context.req.get('host')}/${reset_token}`;
+                    await reset_util(existing_user,email_token,reset_token,`WelcomeBack ${existing_user.full_name.split(' ')[0]},Kindly reset your Password valid for 10mins`,context); 
+                    throw new UserInputError('This user once existed on this site. check your email to reset your password');
+                    
+                }
                 const register_user = await User.create({
                     full_name,
                     email,
@@ -80,11 +93,12 @@ const UserResolver = {
                     roles,
                     createdAt //it should be in this format [mon March 2020]   
                 });
-                const settings_url = `${req.protocol}://${req.get('host')}/settings`; 
+                
+                const settings_url = `${context.req.protocol}://${context.req.get('host')}/settings`; 
                 const welcome = 'welcome'; 
-                const subject = 'WELCOME TO ROLLING LOUD'
+                const subject = 'WELCOME TO ROLLING LOUD';
                 await new Email(register_user,settings_url).sendWelcome(welcome,subject);   
-                const token = jwt.sign({id:register_user.id,email,username,roles},process.env.JWT_SECRET,{expiresIn:"90d"});
+                const token = jwt.sign({id:register_user.id,email,username,roles},process.env.JWT_SECRET,{expiresIn:"90d"},context);
                 
                 
                 return {
@@ -107,13 +121,7 @@ const UserResolver = {
 
                 const reset_token = crypto.randomBytes(32).toString('hex');
                 const email_token = crypto.createHash('sha256').update(reset_token).digest('hex');
-                user.passwordResetToken = email_token;
-                user.passwordResetCreatedAt = new Date().toString();   
-                user.passwordResetTokenExp = user.passwordResetCreatedAt + 600
-                await user.save({validateBeforeSave: false});
-                const token_url = `${req.protocol}://${req.get('host')}/${reset_token}`
-                await new Email(user,token_url).sendReset('reset','PLEASE RESET YOUR PASSWORD(valid for 10 mins)');
-                req.user = user;
+                await reset_util(user,email_token,reset_token,'Please Reset your Password? Valid for 10mins',context);  
             }catch(err){
                 throw new UserInputError(err.message);
             }
@@ -146,8 +154,69 @@ const UserResolver = {
             }
            
 
+        },
+
+        deleteAccount: async (parents,args,context,info) => {
+            const user = await authenticated_user(context);
+            if(user.active === true){  
+                user.active = false;
+                await user.save();   
+            }
+        },
+        updateMyPassword: async (parent,{updateInput:{current_password,new_password,confirm_new_password}},context,info) => {
+            //TODO: we need to check if the current password matches with what is in the database
+            //TODO: we then need to update the password but then we also check if the confirm password matches withe the new password
+            //TODO: and then we save it.
+            const user = await authenticated_user(context);
+            if(user){
+                const compare_password = await bcrypt.compare(current_password,user.password);
+                if(!compare_password){
+                    throw new UserInputError('password does not match with your current password');
+                }
+                if(new_password !== confirm_new_password){
+                    throw new UserInputError('passwords do not match!')
+                }
+                new_password = await bcrypt.hash(new_password,12);
+                user.password = new_password
+                await user.save();
+               
+            }
+        },
+        updateMyProfile: async (parent,{profileUpdate:{full_name,username,email,description,license_file}},context,info) => {
+            //TODO: check if the user is authenticated and then update the details
+            //TODO: if the user tries to update the roles or password we get an error
+            //TODO: We do not want to leave any null values so if there are null values we set the old value to it
+            //FIXME: But then come to think of it i think graphql has already helped with that since we are choosing what to specifically update
+            try{
+                const user = await authenticated_user(context);
+                if(user){
+                    const updated_user = await User.findById(user.id);
+                    const the_license_file = process.env.BITCOIN_ADDRESS;  
+                    const encrypted_license = await bcrypt.hash(the_license_file,12);
+                    updated_user.full_name = full_name;
+                    updated_user.username =username;
+                    updated_user.email = email;
+                    updated_user.description = description;
+                    updated_user.license_file = encrypted_license;
+                    if(updated_user.license_file){    
+                        if(updated_user.license_send === true){ 
+                            // license_send has to be set to false we will change it when we use REACT
+                            //so a button will be responsible for that to work...
+                             await new Email(user,the_license_file).sendLicenseFile('license','LICENSE_REQUEST')
+                        }
+                            if(updated_user.following.length >= 150000 || updated_user.license_check === true){
+                                user.verified = true;      
+                            }
+                        }
+                            await updated_user.save();  
+                            return updated_user;   
+                    } 
+                }catch(err){
+                throw new UserInputError(err);   
+            }
+            
         }
     }
 }
 
-module.exports = UserResolver
+module.exports = UserResolver   

@@ -8,10 +8,15 @@ const userSchema = new Schema({
     password:String,
     roles:{
         type:String,
+        enum:['User','Dealer']
     },
     description:String,
     user_image:String,
-    license_file:String,
+    license_file:{
+        type:String,
+        minlength:2,
+        maxlength:100
+    },
     starred:[
         {
             id:String,
@@ -19,9 +24,33 @@ const userSchema = new Schema({
             createdAt:String
         }
     ],
+    following:[
+        {
+            id:String,
+            username:String,
+            user_image:String,
+            createdAt:String
+        }
+    ],
     passwordResetToken:String,
     passwordResetCreatedAt:String,
-    passwordResetTokenExp:String
+    passwordResetTokenExp:String,
+    active:{
+        type:Boolean,
+        default:true
+    },
+    verified:{
+        type:Boolean,
+        default:false
+    },
+    license_check:{
+        type:Boolean,
+        default:false
+    },
+    license_send:{
+        type:Boolean,
+        default:false
+    }
 })
 
 const User = model('User',userSchema);

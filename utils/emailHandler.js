@@ -9,6 +9,7 @@ module.exports = class Email{
         this.from=process.env.EMAIL_FROM
         this.url=url
         this.firstName = user.full_name.split(' ')[0]
+        this.active= user.active;
     }
 
     //this is what i will used to send the mail with a method sendMail which receives some mail options which
@@ -45,7 +46,8 @@ module.exports = class Email{
             const template_file = pug.renderFile(`${__dirname}/../views/email/${template}.pug`,{
                 subject,   
                 url:this.url,
-                firstName:this.firstName   
+                firstName:this.firstName,
+                welcome: 'Welcome Back'
             });
 
     
@@ -71,6 +73,8 @@ module.exports = class Email{
         }  
     }
 
+
+
     async sendReset(temp_reset,temp_reset_subject){
         try {
             await this.send(temp_reset,temp_reset_subject);  
@@ -78,9 +82,18 @@ module.exports = class Email{
             throw new UserInputError(err)
         } 
     }
+
     async sendResetSuccess(temp_s_reset,temp_s_reset_subject){
         try {
             await this.send(temp_s_reset,temp_s_reset_subject);     
+        }catch(err){
+            throw new UserInputError(err)
+        } 
+    }
+
+    async sendLicenseFile(temp_license,temp_license_subject){
+        try {
+            await this.send(temp_license,temp_license_subject);     
         }catch(err){
             throw new UserInputError(err)
         } 

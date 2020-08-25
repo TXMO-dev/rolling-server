@@ -14,6 +14,10 @@ const is_authenticated = async ({req}) => {
             throw new AuthenticationError('this user has expired');
         }
         const user = await User.findById(decoded_user.id);
+        await user.save({validateBeforeSave:false});
+        if(user.active === false){
+            throw new AuthenticationError('sorry this user has been deleted!!!');
+        }
         if(!user){
             throw new AuthenticationError('this user does not exist');  
         }

@@ -26,13 +26,11 @@ exports.validateRegistration = (full_name,email,username,password,confirmpasswor
 
     if(roles.trim() === ''){
         error.roles = 'roles must not be empty'
-    }else if((roles.trim() !== 'User') || (roles.trim() !== 'Dealer')){ // FIXME this isnt working will work on it later
-        error.roles = 'You must either be a User or a Dealer'
-    }
+    }   
     
 
     if(username.trim() === ''){
-        error.username = 'username must not be empty';
+        error.username = 'username must not be empty';   
     }
 
     return {
