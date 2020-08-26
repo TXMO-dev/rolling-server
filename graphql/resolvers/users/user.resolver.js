@@ -198,6 +198,9 @@ const UserResolver = {
                     updated_user.email = email;
                     updated_user.description = description;
                     updated_user.license_file = encrypted_license;
+                    updated_user.passwordResetCreatedAt = undefined;
+                    updated_user.passwordResetToken = undefined;
+                    updated_user.passwordResetTokenExp = undefined;
                     if(updated_user.license_file){    
                         if(updated_user.license_send === true){ 
                             // license_send has to be set to false we will change it when we use REACT
