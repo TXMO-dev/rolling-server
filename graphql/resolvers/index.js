@@ -1,4 +1,3 @@
-const Userresolver = require('./users/user.resolver');
 const UserResolver = require('./users/user.resolver');
 
 const resolvers = {
@@ -9,5 +8,5 @@ const resolvers = {
         ...UserResolver.Mutation  
     }
 }
-
+  
 module.exports = resolvers;

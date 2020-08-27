@@ -38,8 +38,22 @@ const carSchema = new Schema({
    
 
 
-    Image:String,
-    Images:[String],
+    Image:{
+        id:String,
+        filename:String,
+        mimetype:String,
+        path:String,
+        uploaded_at:Date
+    },
+    Images:[
+        {
+            id:String,
+            filename:String,
+            mimetype:String,
+            path:String,
+            uploaded_at:Date
+        }
+    ],
     createdAt:String
 
 });

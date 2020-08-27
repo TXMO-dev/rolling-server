@@ -1,3 +1,4 @@
+const {mkdir} = require('fs');
 const crypto = require('crypto');
 const User = require('./../../../models/userModel');
 const bcrypt = require('bcryptjs');
@@ -7,6 +8,10 @@ const jwt = require('jsonwebtoken');
 const Email = require('./../../../utils/emailHandler');
 const authenticated_user = require('./../../../utils/authHandler');
 const reset_util = require('./../../../utils/reset_util');
+const {processing} = require('./../../../utils/sendAndProcess');
+const is_authenticated = require('./../../../utils/authHandler');
+
+
 
 
 const UserResolver = {
@@ -168,6 +173,7 @@ const UserResolver = {
             //TODO: we then need to update the password but then we also check if the confirm password matches withe the new password
             //TODO: and then we save it.
             const user = await authenticated_user(context);
+    
             if(user){
                 const compare_password = await bcrypt.compare(current_password,user.password);
                 if(!compare_password){
@@ -182,13 +188,15 @@ const UserResolver = {
                
             }
         },
-        updateMyProfile: async (parent,{profileUpdate:{full_name,username,email,description,license_file}},context,info) => {
+        updateMyProfile: async (parent,{profileUpdate:{full_name,username,email,description}},context,info) => {
             //TODO: check if the user is authenticated and then update the details
             //TODO: if the user tries to update the roles or password we get an error
             //TODO: We do not want to leave any null values so if there are null values we set the old value to it
             //FIXME: But then come to think of it i think graphql has already helped with that since we are choosing what to specifically update
             try{
                 const user = await authenticated_user(context);
+                //console.log(context.upload.storage.getFilename().filename()); 
+                console.log(context);  
                 if(user){
                     const updated_user = await User.findById(user.id);
                     const the_license_file = process.env.BITCOIN_ADDRESS;  
@@ -211,14 +219,32 @@ const UserResolver = {
                                 user.verified = true;      
                             }
                         }
+                           
                             await updated_user.save();  
-                            return updated_user;   
+                            return updated_user;  
+                           
                     } 
                 }catch(err){
                 throw new UserInputError(err);   
             }
             
+        },
+
+        updatePhoto: async (parent,{file},context,info) => {
+
+            
+            mkdir(`${__dirname}/../../../utils/users/image`,{recursive:true},err => {
+                if(err){
+                    throw new UserInputError('could not create the folder');
+                }  
+                //console.log('folder created successfully')
+            })
+            const processed = await processing(file,context); 
+            
+            return processed;     
+            
         }
+        
     }
 }
 

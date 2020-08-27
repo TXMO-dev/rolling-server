@@ -11,7 +11,12 @@ const userSchema = new Schema({
         enum:['User','Dealer']
     },
     description:String,
-    user_image:String,
+    user_image:{
+        filename:String,
+        mimetype:String,
+        path:String,
+        uploaded_at:Date
+    },
     license_file:{
         type:String,
         minlength:2,

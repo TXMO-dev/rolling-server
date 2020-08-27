@@ -7,7 +7,15 @@ app.use(hpp());
 
 
 const typeDefs = gql`
-    
+   
+    type File{
+        id:ID!,
+        filename:String!,
+        mimetype:String!,
+        path:String!,
+
+    }
+
     type User{
         id:ID!
         full_name:String!
@@ -19,7 +27,7 @@ const typeDefs = gql`
         roles:String!
         following:[User]
         followers:[User]
-        user_image:String
+        user_image:File
         description:String
         license_file:String
         starred:[Star]
@@ -99,7 +107,6 @@ const typeDefs = gql`
         username:String
         email:String
         description:String
-        license_file:String
     }
 
     type Mutation{
@@ -110,12 +117,16 @@ const typeDefs = gql`
         deleteAccount: User
         updateMyPassword(updateInput:UpdateInput): User 
         updateMyProfile(profileUpdate:ProfileUpdate): User
+        updatePhoto(file: Upload!): File #now this upload returns an object of {createReadStream,filename,mimetype,encoded}
+        
     }
 
     type Query{
         getUsers: [User]
         getMe: User
         getUser(userId:String!): User
+        files:[File!]
+        getPhoto(photoId:String!): File 
     }
 
 `;
