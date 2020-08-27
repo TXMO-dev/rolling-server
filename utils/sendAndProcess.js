@@ -16,7 +16,7 @@ const fileupload = async ({stream,filename,mimetype},context) => {
       
     const user = await is_authenticated(context);
     if(filename === user.user_image.filename){
-        throw new UserInputError('this user already exists');
+        throw new UserInputError('this image already exists');
     }   
     if(user){
         const id = shortid.generate();
