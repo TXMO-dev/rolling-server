@@ -17,7 +17,7 @@ const DB = process.env.MONGODB_ATLAS.replace('<password>',process.env.MONGODB_PA
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context:({req,res}) => ({req,res})
+    context:({req,res}) => ({req,res})   
 })
 
 const PORT = process.env.PORT || 5000;

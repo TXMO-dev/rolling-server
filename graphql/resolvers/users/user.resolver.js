@@ -9,7 +9,7 @@ const Email = require('./../../../utils/emailHandler');
 const authenticated_user = require('./../../../utils/authHandler');
 const reset_util = require('./../../../utils/reset_util');
 const {processing} = require('./../../../utils/sendAndProcess');
-const is_authenticated = require('./../../../utils/authHandler');
+
 
 
 
@@ -231,21 +231,23 @@ const UserResolver = {
         },
 
         updatePhoto: async (parent,{file},context,info) => {
-
+            //TODO: Change the actual storage directory to a bucket in the cloud...
             
-            mkdir(`${__dirname}/../../../utils/users/image`,{recursive:true},err => {
-                if(err){
-                    throw new UserInputError('could not create the folder');
-                }  
-                //console.log('folder created successfully')
-            })
-            const processed = await processing(file,context); 
-            
-            return processed;     
+                mkdir(`${__dirname}/../../../utils/users/image`,{recursive:true},err => {
+                    if(err){
+                        throw new UserInputError('could not create the folder');
+                    }  
+                    //console.log('folder created successfully')
+                })
+                const processed = await processing(file,context);            
+                
+                return processed;
+        
+                 
             
         }
         
-    }
+    }   
 }
 
 module.exports = UserResolver   

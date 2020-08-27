@@ -69,9 +69,10 @@ const typeDefs = gql`
         reviews:[Review]
         likes:[Like]
         condition:String!
+        dealer:User!
         Deal:String!
-        Image:String!
-        Images:[String]
+        Image:File!
+        Images:[File]
         createdAt:String!
 
     }
@@ -109,6 +110,17 @@ const typeDefs = gql`
         description:String
     }
 
+    input CarDetails{
+        name:String!
+        description:String!
+        category:String!
+        price:Float!
+        condition:String! 
+        Deal:String!
+        Image:Upload!
+        Images:[Upload]
+    }
+
     type Mutation{
         register(registerInput:RegisterInput): User
         login(loginInput:LoginInput): User
@@ -118,7 +130,7 @@ const typeDefs = gql`
         updateMyPassword(updateInput:UpdateInput): User 
         updateMyProfile(profileUpdate:ProfileUpdate): User
         updatePhoto(file: Upload!): File #now this upload returns an object of {createReadStream,filename,mimetype,encoded}
-        
+        createCar(carDetails:CarDetails): Car 
     }
 
     type Query{

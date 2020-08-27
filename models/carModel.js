@@ -36,7 +36,12 @@ const carSchema = new Schema({
         enum:['Negotiable','Non-Negotiable']
     },
    
-
+    dealer:{
+        id:String,
+        username:String,
+        email:String,
+        createdAt:Date
+    },
 
     Image:{
         id:String,
