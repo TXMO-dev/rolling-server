@@ -49,7 +49,7 @@ const typeDefs = gql`
     }
 
     type Review{
-        id:ID!
+        id:ID! 
         username:String!
         body:String!
         createdAt:String!
@@ -129,9 +129,11 @@ const typeDefs = gql`
         updateMyProfile(profileUpdate:ProfileUpdate): User
         updatePhoto(file: Upload!): File #now this upload returns an object of {createReadStream,filename,mimetype,encoded}
         createCar(carDetails:CarDetails): Car
-        createCarPhoto(Image: Upload,id:String!): File    
+        createCarPhoto(Image: Upload!,id:String!): File    
         deleteCarPhoto(carId:String!,imageId:String!): Car
-        createReview(carId:String,body:String): Review  
+        createReview(carId:String!,body:String!): Review
+        deleteReview(carId:String!,reviewId:String!): Review 
+        updateReview(carId:String!,reviewId:String!,body:String!): Review   
     }
 
     type Query{

@@ -17,7 +17,9 @@ const carSchema = new Schema({
             id:String,
             username:String,
             body:String,
+            generated_id:String,
             createdAt:String,
+            
         }
     ],
     likes:[
