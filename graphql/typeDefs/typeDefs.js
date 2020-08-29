@@ -9,10 +9,11 @@ app.use(hpp());
 const typeDefs = gql`
    
     type File{
-        id:ID!,
-        filename:String!,
-        mimetype:String!,
-        path:String!,
+        #id:ID!
+        filename:String,
+        mimetype:String,
+        path:String,
+        uploaded_at:String
 
     }
 
@@ -69,10 +70,9 @@ const typeDefs = gql`
         reviews:[Review]
         likes:[Like]
         condition:String!
-        dealer:User!
+        dealer:String!
+        Images:[File]!  
         Deal:String!
-        Image:File!
-        Images:[File]
         createdAt:String!
 
     }
@@ -116,9 +116,7 @@ const typeDefs = gql`
         category:String!
         price:Float!
         condition:String! 
-        Deal:String!
-        Image:Upload!
-        Images:[Upload]
+        deal:String!
     }
 
     type Mutation{
@@ -130,7 +128,10 @@ const typeDefs = gql`
         updateMyPassword(updateInput:UpdateInput): User 
         updateMyProfile(profileUpdate:ProfileUpdate): User
         updatePhoto(file: Upload!): File #now this upload returns an object of {createReadStream,filename,mimetype,encoded}
-        createCar(carDetails:CarDetails): Car 
+        createCar(carDetails:CarDetails): Car
+        createCarPhoto(Image: Upload,id:String!): File    
+        deleteCarPhoto(carId:String!,imageId:String!): Car
+        createReview(carId:String,body:String): Review  
     }
 
     type Query{

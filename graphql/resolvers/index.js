@@ -1,5 +1,6 @@
 const UserResolver = require('./users/user.resolver');
 const CarResolver = require('./cars/cars.resolvers');
+const ReviewResolver = require('./reviews/review.resolver');
 
 const resolvers = {
     Query:{
@@ -7,7 +8,8 @@ const resolvers = {
     },
     Mutation:{
         ...UserResolver.Mutation,
-        ...CarResolver.Mutation   
+        ...CarResolver.Mutation,
+        ...ReviewResolver.Mutation      
     }
 }
   

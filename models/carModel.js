@@ -31,28 +31,16 @@ const carSchema = new Schema({
         type:String,
         enum:['Used','New']
     },
-    Deal:{
+    deal:{
         type:String,
         enum:['Negotiable','Non-Negotiable']
     },
    
-    dealer:{
-        id:String,
-        username:String,
-        email:String,
-        createdAt:Date
-    },
+    dealer:String,
 
-    Image:{
-        id:String,
-        filename:String,
-        mimetype:String,
-        path:String,
-        uploaded_at:Date
-    },
-    Images:[
+    Images:[  
         {
-            id:String,
+            name:String,  
             filename:String,
             mimetype:String,
             path:String,

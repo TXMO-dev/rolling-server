@@ -9,6 +9,7 @@ const Email = require('./../../../utils/emailHandler');
 const authenticated_user = require('./../../../utils/authHandler');
 const reset_util = require('./../../../utils/reset_util');
 const {processing} = require('./../../../utils/sendAndProcess');
+const is_authenticated = require('./../../../utils/authHandler');
 
 
 
@@ -96,6 +97,11 @@ const UserResolver = {
                     password,
                     confirmPassword,
                     roles,
+                    user_image:{
+                        filename:"user_default.jpeg",
+                        mimetype:"image/jpeg",  
+                        path:`${__dirname}/../../../utils/cars/image/default/user_default.jpeg`    
+                    },
                     createdAt //it should be in this format [mon March 2020]   
                 });
                 
@@ -232,8 +238,8 @@ const UserResolver = {
 
         updatePhoto: async (parent,{file},context,info) => {
             //TODO: Change the actual storage directory to a bucket in the cloud...
-            
-                mkdir(`${__dirname}/../../../utils/users/image`,{recursive:true},err => {
+            const user = is_authenticated(context);
+                mkdir(`${__dirname}/../../../utils/users/image/${user.id}`,{recursive:true},err => {   
                     if(err){
                         throw new UserInputError('could not create the folder');
                     }  
