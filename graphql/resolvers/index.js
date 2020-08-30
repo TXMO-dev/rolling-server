@@ -9,7 +9,8 @@ const resolvers = {
     Query:{
         ...UserResolver.Query,
         ...FollowResolver.Query,
-        ...CarResolver.Query
+        ...CarResolver.Query,
+        ...LikeResolver.Query
     },
     Mutation:{
         ...UserResolver.Mutation,

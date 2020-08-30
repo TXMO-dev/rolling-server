@@ -132,11 +132,11 @@ const typeDefs = gql`
         createCar(carDetails:CarDetails): Car
         createCarPhoto(Image: Upload!,id:String!): File    
         deleteCarPhoto(carId:String!,imageId:String!): Car
-        createReview(carId:String!,body:String!): Review
-        deleteReview(carId:String!,reviewId:String!): Review 
+        createReview(carId:String!,body:String!): [Review]
+        deleteReview(carId:String!,reviewId:String!): [Review] 
         updateReview(carId:String!,reviewId:String!,body:String!): Review 
-        createLike(carId:ID!): Like 
-        createFollow(userId:String!): User
+        createLike(carId:ID!): [Like] 
+        createFollow(userId:String!): [User]
          
     }
 
@@ -146,7 +146,8 @@ const typeDefs = gql`
         getUser(userId:String!): User
         files:[File!]
         getPhoto(photoId:String!): File 
-        followers: User
+        followers: [User]
+        usersOfLikedPost(carId:String!): [User]
     }
 
 `;

@@ -26,8 +26,12 @@ const userSchema = new Schema({
         {
             id:String,
             username:String,
-            user_image:String, 
-            user_description:String,
+            user_image:{
+                filename:String,
+                mimetype:String,
+                path:String
+            }, 
+            description:String,
             createdAt:String
         }
     ],

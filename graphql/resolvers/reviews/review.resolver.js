@@ -26,6 +26,7 @@ const reviewResolver = {
                     car.reviewCount = car.reviews.length;
                 
                 await car.save();
+                return car.reviews; //IT IS WORKING
             }
         },
         deleteReview: async (parent,{carId,reviewId},context,info) => {
@@ -41,6 +42,7 @@ const reviewResolver = {
                 car.reviews.splice(carIndex,1);
                 car.reviewCount = car.reviews.length;
                 await car.save({validateBeforeSave:false});
+                return car.reviews; //IT IS WORKING
             }
            
 
@@ -57,6 +59,7 @@ const reviewResolver = {
                 const obj_keys = real_car[reviewId];
                 obj_keys.body = body;
                 await car.save({validateBeforeSave:false});
+                return obj_keys //IT IS WORKING NOW
             }
         }
 
