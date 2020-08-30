@@ -27,7 +27,6 @@ const typeDefs = gql`
         token:String
         roles:String!
         following:[User]
-        followers:[User]
         user_image:File
         description:String
         license_file:String
@@ -67,12 +66,14 @@ const typeDefs = gql`
         description:String!
         category:String!
         price:Float!
-        reviews:[Review]
-        likes:[Like]
+        reviews:[Review]!
+        likes:[Like]!
         condition:String!
         dealer:String!
         Images:[File]!  
         Deal:String!
+        reviewCount:Int!
+        likeCount:Int!
         createdAt:String!
 
     }
@@ -133,7 +134,10 @@ const typeDefs = gql`
         deleteCarPhoto(carId:String!,imageId:String!): Car
         createReview(carId:String!,body:String!): Review
         deleteReview(carId:String!,reviewId:String!): Review 
-        updateReview(carId:String!,reviewId:String!,body:String!): Review   
+        updateReview(carId:String!,reviewId:String!,body:String!): Review 
+        createLike(carId:ID!): Like 
+        createFollow(userId:String!): User
+         
     }
 
     type Query{
@@ -142,6 +146,7 @@ const typeDefs = gql`
         getUser(userId:String!): User
         files:[File!]
         getPhoto(photoId:String!): File 
+        followers: User
     }
 
 `;

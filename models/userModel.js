@@ -22,21 +22,18 @@ const userSchema = new Schema({
         minlength:2,
         maxlength:100
     },
-    starred:[
-        {
-            id:String,
-            username:String,
-            createdAt:String
-        }
-    ],
     following:[
         {
             id:String,
             username:String,
-            user_image:String,
+            user_image:String, 
+            user_description:String,
             createdAt:String
         }
     ],
+    //Followers will be a query...
+    followingCount:Number,
+    followerCount:Number,  
     passwordResetToken:String,
     passwordResetCreatedAt:String,
     passwordResetTokenExp:String,

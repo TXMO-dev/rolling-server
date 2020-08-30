@@ -5,7 +5,6 @@ const reviewResolver = {
     Mutation:{
         createReview: async (parent,{carId,body},context,info) => {
             const user = is_authenticated(context);
-            
             if(user){
                 const car = await Car.findById(carId);
                 if(!car){
@@ -24,15 +23,15 @@ const reviewResolver = {
                 })
 
                     car.reviews = [reviewObj,...car.reviews];
+                    car.reviewCount = car.reviews.length;
                 
                 await car.save();
-
             }
         },
         deleteReview: async (parent,{carId,reviewId},context,info) => {
-            const user = is_authenticated(context);
-            const car = await Car.findById(carId);  
-            if(user){   
+            const user = is_authenticated(context);            
+            if(user){  
+                const car = await Car.findById(carId);   
                 const real_car = car.reviews.reduce((accumulator,currentObj) => {
                     accumulator[currentObj._id] = currentObj;
                     return accumulator;
@@ -40,15 +39,17 @@ const reviewResolver = {
                 const obj_keys = real_car[reviewId];
                 const carIndex = car.reviews.findIndex(reviewObj => reviewObj === obj_keys)
                 car.reviews.splice(carIndex,1);
+                car.reviewCount = car.reviews.length;
                 await car.save({validateBeforeSave:false});
             }
+           
 
         },
 
         updateReview: async (parent,{carId,reviewId,body},context,info) => {
             const user = is_authenticated(context);
-            const car = await Car.findById(carId);
             if(user){
+                const car = await Car.findById(carId);
                 const real_car = car.reviews.reduce((accumulator,currentObj) => {
                     accumulator[currentObj._id] = currentObj;
                     return accumulator;

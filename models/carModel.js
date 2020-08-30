@@ -26,7 +26,7 @@ const carSchema = new Schema({
         {
             id:String,
             username:String,
-            createdAt:String
+            createdAt:Date
         }
     ],
     condition:{
@@ -49,6 +49,8 @@ const carSchema = new Schema({
             uploaded_at:Date
         }
     ],
+    likeCount:Number,
+    reviewCount:Number,
     createdAt:String
 
 });
