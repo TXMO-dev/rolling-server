@@ -26,6 +26,7 @@ const reviewResolver = {
                     car.reviewCount = car.reviews.length;
                 
                 await car.save();
+                context.pubsub.publish('NEW_REVIEW_COUNT',{newReviewCount:car})
                 return car.reviews; //IT IS WORKING
             }
         },
@@ -61,8 +62,15 @@ const reviewResolver = {
                 await car.save({validateBeforeSave:false});
                 return obj_keys //IT IS WORKING NOW
             }
-        }
+        },
 
+    },
+    Subscription:{
+        newReviewCount:{
+            subscribe:(_,__,context) => {
+                return context.pubsub.asyncIterator('NEW_REVIEW_COUNT')
+            }
+        }
     }
 }
 

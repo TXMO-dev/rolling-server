@@ -13,6 +13,7 @@ const LikeResolver = {
                 }
                 const liked_users = car_post.likes.map(async likeObj =>await User.findOne({username:likeObj.username}));
                 const resolved_users = await Promise.all(liked_users); 
+                context.pubsub.publish('NEW_LIKE_USER',{newLikedUser:resolved_users});
                 //console.log(resolved_users); 
                 return resolved_users;   //IT RETURNS       
                 
@@ -41,8 +42,19 @@ const LikeResolver = {
                     }); 
                     car.likeCount = car.likes.length; 
                     await car.save({validateBeforeSave:false}); 
+                    context.pubsub.publish('NEW_LIKE_COUNT',{newLikeCount:car})
                     return[...car.likes];   // IT IS WORKING NOW  
                 };  
+        }
+    },
+    Subscription:{
+        newLikeCount:{
+            subscribe:(_,__,context) => {
+                return context.pubsub.asyncIterator('NEW_LIKE_COUNT');
+            }
+        },
+        newLikedUser:{
+            subscribe:(_,__,context) => context.pubsub.asyncIterator('NEW_LIKE_USER')
         }
     }
 }

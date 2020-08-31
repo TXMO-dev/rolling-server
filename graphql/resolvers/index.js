@@ -18,6 +18,12 @@ const resolvers = {
         ...ReviewResolver.Mutation,
         ...LikeResolver.Mutation,
         ...FollowResolver.Mutation    
+    },
+    Subscription:{
+        ...CarResolver.Subscription,
+        ...FollowResolver.Subscription,
+        ...LikeResolver.Subscription,
+        ...ReviewResolver.Subscription
     }
 }
   

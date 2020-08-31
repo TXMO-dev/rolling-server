@@ -53,6 +53,11 @@ const UserResolver = {
                     return await User.find().slice(0,10);  
                     
                 }
+                context.pubsub.publish('RECOMMENDED_USERS',{
+                    getRecommendedUsers:user.filter(userObj => userObj.tags
+                    .find(user_obj_tags => user_obj_tags === auth_user.tags
+                    .forEach(auth_user_tags => auth_user_tags)))
+                })
                 return user.filter(userObj => userObj.tags
                     .find(user_obj_tags => user_obj_tags === auth_user.tags
                     .forEach(auth_user_tags => auth_user_tags)));
@@ -267,7 +272,16 @@ const UserResolver = {
             
         }
         
-    }   
+    },
+
+    Subscription:{
+        getRecommendedUsers:{
+            subscribe:(_,__,context) => {
+                return context.pubsub.asyncIterator('RECOMMENDED_USERS');
+            }
+        }
+    }
+    
 }
 
 module.exports = UserResolver   

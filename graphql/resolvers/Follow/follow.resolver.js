@@ -9,6 +9,7 @@ const FollowResolver = {
                 //console.log(followers);
                 auth_user.followerCount = followers.length;
                 await auth_user.save();
+                context.pubsub.publish('NEW_FOLLOWER',{newFollowerCount:auth_user})
                 return followers; //ITS RETURNING
                   
             
@@ -37,11 +38,21 @@ const FollowResolver = {
                     auth_user.followingCount = auth_user.following.length;
                     await auth_user.save();
                 }
-                
+                context.pubsub.publish('NEW_FOLLOWING',{newFollowing:auth_user.following});   
                 return auth_user.following; //IT IS WORKING
             }
         }
-    }
+    },
+    Subscription:{
+        newFollowing:{
+            subscribe:(_,__,context) => {
+                return context.pubsub.asyncIterator('NEW_FOLLOWING');
+            }
+        },
+        newFollowerCount:{
+            subscribe:(_,__,context) => context.pubsub.asyncIterator('NEW_FOLLOWER')
+        }
+    }  
 }
 
 module.exports = FollowResolver;

@@ -4,12 +4,14 @@ const { UserInputError } = require('apollo-server');
 const {mkdir} = require('fs');
 const {processing_2} = require('./../../../utils/sendAndProcess');
 
+
 const CarResolver = {
     Query:{
         getCars:async (parent,args,context,info) => {
-            const auth_user = is_authenticated(context);
+            const auth_user = is_authenticated(context);   
             if(auth_user){
-                const all_cars = await Car.find();   
+                const all_cars = await Car.find();  
+                context.pubsub.publish('CAR_FEED',{getAllCarFeed:all_cars});
                 return all_cars;
             }
         },
@@ -46,8 +48,8 @@ const CarResolver = {
                     
 
                 });
-                
-                return car;
+                context.pubsub.publish('NEW_CAR',{newCar:car});
+                return car; 
             }
             }catch(err){
                 throw new UserInputError(err);   
@@ -99,7 +101,18 @@ const CarResolver = {
                 console.log("deletion happened successfully");     
             }
         }
+    },
+    Subscription:{
+        newCar:{
+            subscribe:(parent,args,context,info) => {
+                    return context.pubsub.asyncIterator('NEW_CAR');
+                }  
+            },
+        getAllCarFeed:{
+            subscribe:(_,__,context) => context.pubsub.asyncIterator('CAR_FEED')
+        }
+        }
     }
-}
+
 
 module.exports = CarResolver;

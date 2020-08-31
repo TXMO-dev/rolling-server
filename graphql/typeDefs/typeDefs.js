@@ -71,7 +71,7 @@ const typeDefs = gql`
         condition:String!
         dealer:String!
         Images:[File]!  
-        Deal:String!
+        deal:String!
         reviewCount:Int!
         likeCount:Int!
         createdAt:String!
@@ -153,6 +153,22 @@ const typeDefs = gql`
         getCar(carId:String!): Car
     }
 
+    type Subscription{
+        newCar:Car!#DONE #this subscription MIGHT be used at 2 places thus both the get car feed and published but this is for published
+        newFollowing:[User]#DONE #automatically it will reflect in the followers if it doesnt then i will come and create for followers
+        newFollowerCount:User!#DONE #this gets the follower count in real time for the authenticated user
+        newLikeCount:Car!#DONE
+        newReviewCount:Car!#DONE
+        newLikedUser:[User]!#DONE #to retreive all users of liked post in real time
+        getAllCarFeed:[Car]!#DONE #this will get all the cars for me in real time
+        getRecommendedUsers:[User]!#DONE #this will return the recommended users in real time
+    }
+
 `;
+
+/*
+So far so good my backend server is done and i strongly beleive has been strongly been implemented...
+
+*/
 
 module.exports = typeDefs;  
