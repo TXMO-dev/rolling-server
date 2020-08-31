@@ -43,6 +43,19 @@ const UserResolver = {
             }catch(err){
                 throw new Error(err.message);
             }
+        },
+
+        getUserByTags:async (parent,args,context,info) => {
+            const auth_user = await is_authenticated(context);  
+            const user = await User.find();
+            if(auth_user){
+                if(auth_user.tags === []){
+                    return await User.find();
+                }
+                return user.filter(userObj => userObj.tags
+                    .find(user_obj_tags => user_obj_tags === auth_user.tags
+                    .forEach(auth_user_tags => auth_user_tags)));
+            }
         }
     },
     Mutation:{

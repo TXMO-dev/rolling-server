@@ -30,7 +30,7 @@ const typeDefs = gql`
         user_image:File
         description:String
         license_file:String
-        starred:[Star]
+        tags:[String]
         passwordResetToken:String
         passwordResetCreatedAt:String
         passwordResetTokenExp:String
@@ -148,6 +148,7 @@ const typeDefs = gql`
         getPhoto(photoId:String!): File 
         followers: [User]
         usersOfLikedPost(carId:String!): [User]
+        getUserByTags: [User] #this will be used for recommendations 
     }
 
 `;

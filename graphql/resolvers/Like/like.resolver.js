@@ -14,7 +14,7 @@ const LikeResolver = {
                 const liked_users = car_post.likes.map(async likeObj =>await User.findOne({username:likeObj.username}));
                 const resolved_users = await Promise.all(liked_users); 
                 //console.log(resolved_users); 
-                return resolved_users;   //IT RETURNS  
+                return resolved_users;   //IT RETURNS       
                 
                  
             }

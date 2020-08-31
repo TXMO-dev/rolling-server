@@ -31,13 +31,14 @@ const userSchema = new Schema({
                 mimetype:String,
                 path:String
             }, 
-            description:String,
+            description:String,   
             createdAt:String
         }
     ],
     //Followers will be a query...
     followingCount:Number,
-    followerCount:Number,  
+    followerCount:Number, 
+    tags:[String],
     passwordResetToken:String,
     passwordResetCreatedAt:String,
     passwordResetTokenExp:String,
