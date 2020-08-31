@@ -50,7 +50,8 @@ const UserResolver = {
             const user = await User.find();
             if(auth_user){
                 if(auth_user.tags === []){
-                    return await User.find();
+                    const sliced_user = await User.find();
+                    return sliced_user.slice(0,6);
                 }
                 return user.filter(userObj => userObj.tags
                     .find(user_obj_tags => user_obj_tags === auth_user.tags
