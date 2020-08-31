@@ -26,7 +26,7 @@ const UserResolver = {
             }
         },
         getMe: async (parent,args,context,info) => {
-            try {
+            try {   
                 const user = await authenticated_user(context);
                 const me = await User.findById(user.id);
                 return me;
@@ -48,10 +48,10 @@ const UserResolver = {
         getUserByTags:async (parent,args,context,info) => {
             const auth_user = await is_authenticated(context);  
             const user = await User.find();
-            if(auth_user){
+            if(auth_user){     
                 if(auth_user.tags === []){
-                    const sliced_user = await User.find();
-                    return sliced_user.slice(0,6);
+                    return await User.find().slice(0,10);  
+                    
                 }
                 return user.filter(userObj => userObj.tags
                     .find(user_obj_tags => user_obj_tags === auth_user.tags

@@ -43,6 +43,7 @@ const carupload = async ({stream,filename,mimetype},context,id) => {
         const car = await Car.findById(id);
         const image_id = shortid.generate();
         if(user){   
+            if(user.roles !== 'Dealer') throw new Error('Only dealers have permission to upload car images');
             if(mimetype.split('/')[0] === 'image'){
                 const path = `${__dirname}/cars/image/${id}/car-${image_id}-${filename}`;
                 if(car.Images.length === 5){   

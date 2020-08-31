@@ -149,6 +149,8 @@ const typeDefs = gql`
         followers: [User]
         usersOfLikedPost(carId:String!): [User]
         getUserByTags: [User] #this will be used for recommendations 
+        getCars: [Car]
+        getCar(carId:String!): Car
     }
 
 `;
