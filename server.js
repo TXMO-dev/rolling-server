@@ -4,6 +4,10 @@ const {ApolloServer,PubSub, AuthenticationError} = require('apollo-server')
 const typeDefs = require('./graphql/typeDefs/typeDefs');
 const resolvers = require('./graphql/resolvers');
 const is_authenticated = require('./utils/authHandler');
+const firebase = require('firebase');
+const firebaseConfig = require('./firebase/firebase.config');
+firebase.initializeApp(firebaseConfig); 
+   
 
 
 
@@ -32,6 +36,7 @@ const server = new ApolloServer({
 
 const PORT = process.env.PORT || 5000;
 (async _ => {
+    console.log('firebase has successfully been initialized');
     await mongoose.connect(DB,{
         useNewUrlParser: true,
         useUnifiedTopology: true,        

@@ -10,6 +10,7 @@ const authenticated_user = require('./../../../utils/authHandler');
 const reset_util = require('./../../../utils/reset_util');
 const {processing} = require('./../../../utils/sendAndProcess');
 const is_authenticated = require('./../../../utils/authHandler');
+const config = require('./../../../firebase/firebase.config')
 
 
 
@@ -65,6 +66,7 @@ const UserResolver = {
         }
     },
     Mutation:{
+        /* FRONTEND COMPLETED */
         login: async (_,{loginInput:{email,password},context,info}) => {
             const {error,valid} = validateLogin(email,password);
             if(!valid) throw new UserInputError('Errors',{error});     
@@ -86,6 +88,7 @@ const UserResolver = {
             } 
         },
 
+        /* FRONTEND COMPLETED */
         register: async (_,{registerInput:{full_name,email,username,password,confirmPassword,roles,createdAt}},context,info) => {
             /*
                 TODO:register the user into the database           
@@ -116,10 +119,10 @@ const UserResolver = {
                     password,
                     confirmPassword,
                     roles,
-                    user_image:{
+                    user_image:{   
                         filename:"user_default.jpeg",
                         mimetype:"image/jpeg",  
-                        path:`${__dirname}/../../../utils/cars/image/default/user_default.jpeg`    
+                        path:`https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/default_user.jpg?alt=media`    
                     },
                     createdAt //it should be in this format [mon March 2020]   
                 });
@@ -151,14 +154,15 @@ const UserResolver = {
 
                 const reset_token = crypto.randomBytes(32).toString('hex');
                 const email_token = crypto.createHash('sha256').update(reset_token).digest('hex');
-                await reset_util(user,email_token,reset_token,'Please Reset your Password? Valid for 10mins',context);  
+                await reset_util(user,email_token,reset_token,'Please Reset your Password? Valid for 10mins',req); 
+                return user
             }catch(err){
                 throw new UserInputError(err.message);
             }
         
         },
 
-        resetChangePassword: async (_,{resetChangeInput:{reset_token,new_password,confirm_new_password}},{req},info) => {
+        resetChangePassword: async (_,{resetChangeInput:{reset_token,new_password,confirm_new_password}},context,info) => {
             /*
                 TODO: make sure the input reset token matches with the one in the user schema
                 TODO: if it matches then we reset the password to the new password
@@ -176,8 +180,9 @@ const UserResolver = {
                     user.passwordResetCreatedAt = undefined;
                     await user.save({validateBeforeSave: false})
                     console.log('password updated successfully');
-                    const success_url = `${req.protocol}://${req.get('host')}/login`
+                    const success_url = `${context.req.protocol}://${context.req.get('host')}/login`
                     await new Email(user,success_url).sendResetSuccess('reset_success','PASSWORD RESET SUCCESSFUL')
+                    return {...user};
             }
             }catch(err){
                 throw new UserInputError(err);
@@ -204,7 +209,7 @@ const UserResolver = {
                 if(!compare_password){
                     throw new UserInputError('password does not match with your current password');
                 }
-                if(new_password !== confirm_new_password){
+                if(new_password !== confirm_new_password){   
                     throw new UserInputError('passwords do not match!')
                 }
                 new_password = await bcrypt.hash(new_password,12);
@@ -257,7 +262,7 @@ const UserResolver = {
 
         updatePhoto: async (parent,{file},context,info) => {
             //TODO: Change the actual storage directory to a bucket in the cloud...
-            const user = is_authenticated(context);
+            const user = await is_authenticated(context);
                 mkdir(`${__dirname}/../../../utils/users/image/${user.id}`,{recursive:true},err => {   
                     if(err){
                         throw new UserInputError('could not create the folder');

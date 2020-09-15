@@ -3,6 +3,7 @@ const is_authenticated = require('./../../../utils/authHandler');
 const { UserInputError } = require('apollo-server');
 const {mkdir} = require('fs');
 const {processing_2} = require('./../../../utils/sendAndProcess');
+const config = require('./../../../firebase/firebase.config')
 
 
 const CarResolver = {
@@ -10,9 +11,9 @@ const CarResolver = {
         getCars:async (parent,args,context,info) => {
             const auth_user = is_authenticated(context);   
             if(auth_user){
-                const all_cars = await Car.find();  
+                const all_cars = await Car.find().sort('-createdAt');  
                 context.pubsub.publish('CAR_FEED',{getAllCarFeed:all_cars});
-                return all_cars;
+                return all_cars;  
             }
         },
         getCar:async (parent,{carId},context,info) => {
@@ -29,27 +30,26 @@ const CarResolver = {
                 const user = await is_authenticated(context);
                 
             if(user){  
-                if(user.roles !== 'Dealer') throw new Error('Sorry only dealers are able to publish car posts.')
+                if(user.roles !== 'Dealer') throw new Error('Sorry only dealers are able to publish car posts.');
                 const car = await Car.create({
                     name,
                     description,
                     category,
                     price,
-                    condition,
+                    condition,      
                     deal,
                     dealer:user.username,
                     Images:[
                         {
                             filename:'default.jpg',
-                            mimetype:"image/jpeg",
-                            path:`${__dirname}/../../../utils/cars/image/default/default.jpg`
+                            mimetype:"image/jpeg",         
+                            path:`https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/black_pic.jpg?alt=media`  
                         }
                     ] 
-                    
-
                 });
                 context.pubsub.publish('NEW_CAR',{newCar:car});
-                return car; 
+               
+                return car;  
             }
             }catch(err){
                 throw new UserInputError(err);   

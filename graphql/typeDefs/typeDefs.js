@@ -115,7 +115,7 @@ const typeDefs = gql`
         name:String!
         description:String!
         category:String!
-        price:Float!
+        price:String!
         condition:String! 
         deal:String!
     }
@@ -171,4 +171,4 @@ So far so good my backend server is done and i strongly beleive has been strongl
 
 */
 
-module.exports = typeDefs;  
+module.exports = typeDefs;     

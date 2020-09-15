@@ -4,6 +4,13 @@ const shortid = require('shortid');
 const { UserInputError } = require('apollo-server');
 const sharp = require('sharp');
 const Car = require('./../models/carModel');
+const admin = require('firebase-admin');
+const { storageBucket } = require('./../firebase/firebase.config');
+const serviceAccount = require('./../serviceAccount/serviceAccount.json');
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    storageBucket,  
+});
 
 
 
@@ -46,6 +53,7 @@ const carupload = async ({stream,filename,mimetype},context,id) => {
             if(user.roles !== 'Dealer') throw new Error('Only dealers have permission to upload car images');
             if(mimetype.split('/')[0] === 'image'){
                 const path = `${__dirname}/cars/image/${id}/car-${image_id}-${filename}`;
+                const imageToBeUploaded = {path,mimetype} 
                 if(car.Images.length === 5){   
                     throw new UserInputError('you have reached the maximum number of uploads!!!');  
                 }
@@ -56,7 +64,14 @@ const carupload = async ({stream,filename,mimetype},context,id) => {
                             );
                     } 
                 })
-                car.Images = [{filename,mimetype,path},...car.Images];    
+                const image_url = `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/cars%2F${id}%2Fcar-${image_id}-${filename}?alt=media`;
+                car.Images = [
+                    {filename,
+                     mimetype,
+                     path:image_url
+                    },
+                    ...car.Images
+                ];    
                 await car.save();
                 console.log(car);
                 return new Promise((resolve,reject) => {  
@@ -70,7 +85,15 @@ const carupload = async ({stream,filename,mimetype},context,id) => {
                     stream
                     .pipe(transformer)//we are resizing before uploading to path
                     .pipe(createWriteStream(path))
-                    .on("finish",() => resolve({filename,mimetype,path}))  
+                    .on("finish",() => resolve(admin.storage().bucket().upload(imageToBeUploaded.path,{
+                        resumable:false,
+                        destination:`cars/${id}/car-${image_id}-${filename}`,       
+                        metadata:{
+                            metadata:{  
+                                contentType:imageToBeUploaded.mimetype,
+                            }
+                        }   
+                    })))  
                     .on("error",reject);  
                 })
                 
@@ -95,11 +118,13 @@ const fileupload = async ({stream,filename,mimetype},context) => {
     if(user){
         const id = shortid.generate();
         if(mimetype.split('/')[0] === 'image'){
-            const path = `${__dirname}/users/image/${user.id}/user-${id}-${filename}`;  
-            const user_image = user.user_image;
+            let path = `${__dirname}/users/image/${user.id}/user-${id}-${filename}`;       
+            const imageToBeUploaded = {path,mimetype} 
+            const image_url = `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/users%2F${user.id}%2Fuser-${id}-${filename}?alt=media`;
+            const user_image = user.user_image;   
             user_image.filename = filename;
             user_image.mimetype = mimetype;  
-            user_image.path = path;  
+            user_image.path = image_url;  
             await user.save();
             return new Promise((resolve,reject) => {  
                 const transformer = sharp().resize({
@@ -112,15 +137,24 @@ const fileupload = async ({stream,filename,mimetype},context) => {
                 stream
                 .pipe(transformer)//we are resizing before uploading to path
                 .pipe(createWriteStream(path))
-                .on("finish",() => resolve({id,filename,mimetype,path}))  
-                .on("error",reject);  
+                .on("finish",() => resolve( admin.storage().bucket().upload(imageToBeUploaded.path,{
+                    resumable:false,
+                    destination:`users/${user.id}/user-${id}-${filename}`,
+                    metadata:{
+                        metadata:{  
+                            contentType:imageToBeUploaded.mimetype,
+                        }
+                    }
+                })
+                ))  
+                .on("error",reject());  
             })
             
             
         }
     }
    }catch(err){
-       throw new Error('sorry we could not upload file')
+       throw new Error(err)
    }
     
     

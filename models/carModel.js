@@ -8,7 +8,7 @@ const carSchema = new Schema({
     description:String,
     category:{
         type:String,
-        enum:['SUV','Sedan','Hatchback','Sports Car','Coupe','Compact Car','COnvertible','Minivan','Truck','Station Wagon',
+        enum:['SUV','Sedan','Hatchback','Sports Car','Coupe','Compact Car','Convertible','Minivan','Truck','Station Wagon',
         'Crossover','Utility Vehicle','Hybrid','Electric','Luxury Vehicle','Van','Pickup','Off-road','Mid-size','Full-size','Roadstar','Other']
     },
     price:Number,
@@ -49,9 +49,19 @@ const carSchema = new Schema({
             uploaded_at:Date
         }
     ],
-    likeCount:Number,
-    reviewCount:Number,
-    createdAt:String
+    likeCount:{
+        type:Number,
+        default:0
+    },
+    reviewCount:{
+        type:Number,
+        default:0
+    },
+    createdAt:{
+        type:Date,
+        default:Date
+    }
+    
 
 });
 
