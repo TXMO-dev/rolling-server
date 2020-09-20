@@ -49,6 +49,11 @@ const carSchema = new Schema({
             uploaded_at:Date
         }
     ],
+    dealer_image:{
+        type:Schema.Types.String,  
+        ref:'User'
+    },
+    dealer_id:String,
     likeCount:{
         type:Number,
         default:0

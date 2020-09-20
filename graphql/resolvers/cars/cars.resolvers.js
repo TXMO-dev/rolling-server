@@ -22,6 +22,13 @@ const CarResolver = {
                 const car = await Car.findById(carId);
                 return car;  
             }
+        },
+        getCarReviews:async (parent,{carId},context,info) => {
+            const auth_user = is_authenticated(context);
+            if(auth_user){
+                const car = await Car.findById(carId);
+                return car.reviews;
+            }
         }
     },
     Mutation:{
@@ -38,7 +45,9 @@ const CarResolver = {
                     price,
                     condition,      
                     deal,
+                    dealer_id:user.id,
                     dealer:user.username,
+                    dealer_image:user.user_image.path,   
                     Images:[
                         {
                             filename:'default.jpg',
@@ -47,12 +56,11 @@ const CarResolver = {
                         }
                     ] 
                 });
-                context.pubsub.publish('NEW_CAR',{newCar:car});
-               
-                return car;  
-            }
+                //context.pubsub.publish('NEW_CAR',{newCar:car});
+                return car;     
+            }    
             }catch(err){
-                throw new UserInputError(err);   
+                throw new UserInputError(err);         
             }
             
         },

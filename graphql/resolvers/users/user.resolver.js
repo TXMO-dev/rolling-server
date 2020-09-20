@@ -68,8 +68,8 @@ const UserResolver = {
     Mutation:{
         /* FRONTEND COMPLETED */
         login: async (_,{loginInput:{email,password},context,info}) => {
-            const {error,valid} = validateLogin(email,password);
-            if(!valid) throw new UserInputError('Errors',{error});     
+            //const {error,valid} = validateLogin(email,password);
+            //if(!valid) throw new UserInputError('Errors',{error});     
 
             const user = await User.findOne({email});
             if(!user) throw new UserInputError('Wrong User Credentials');

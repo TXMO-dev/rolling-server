@@ -72,6 +72,8 @@ const typeDefs = gql`
         dealer:String!
         Images:[File]!  
         deal:String!
+        dealer_image:String! 
+        dealer_id:String! 
         reviewCount:Int!
         likeCount:Int!
         createdAt:String!
@@ -116,7 +118,7 @@ const typeDefs = gql`
         description:String!
         category:String!
         price:String!
-        condition:String! 
+        condition:String!    
         deal:String!
     }
 
@@ -151,6 +153,7 @@ const typeDefs = gql`
         getUserByTags: [User] #this will be used for recommendations 
         getCars: [Car]
         getCar(carId:String!): Car
+        getCarReviews(carId:String!): [Review]!
     }
 
     type Subscription{

@@ -22,7 +22,7 @@ const resolvers = {
     Subscription:{
         ...CarResolver.Subscription,
         ...FollowResolver.Subscription,
-        ...LikeResolver.Subscription,
+        ...LikeResolver.Subscription,   
         ...ReviewResolver.Subscription
     }
 }
