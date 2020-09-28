@@ -3,7 +3,8 @@ const is_authenticated = require('./../../../utils/authHandler');
 const { UserInputError } = require('apollo-server');
 const {mkdir} = require('fs');
 const {processing_2} = require('./../../../utils/sendAndProcess');
-const config = require('./../../../firebase/firebase.config')
+const config = require('./../../../firebase/firebase.config');
+const shortid = require('shortid')
 
 
 const CarResolver = {
@@ -13,14 +14,14 @@ const CarResolver = {
             if(auth_user){
                 const all_cars = await Car.find().sort('-createdAt');  
                 context.pubsub.publish('CAR_FEED',{getAllCarFeed:all_cars});
-                return all_cars;  
-            }
+                return [...all_cars];    
+            }   
         },
         getCar:async (parent,{carId},context,info) => {
             const auth_user = is_authenticated(context);
             if(auth_user){
                 const car = await Car.findById(carId);
-                return car;  
+                return car; 
             }
         },
         getCarReviews:async (parent,{carId},context,info) => {
@@ -50,6 +51,7 @@ const CarResolver = {
                     dealer_image:user.user_image.path,   
                     Images:[
                         {
+                            id:shortid.generate(),
                             filename:'default.jpg',
                             mimetype:"image/jpeg",         
                             path:`https://firebasestorage.googleapis.com/v0/b/${config.storageBucket}/o/black_pic.jpg?alt=media`  
@@ -85,7 +87,7 @@ const CarResolver = {
             }
         },
 
-        deleteCarPhoto: async (parent,{carId,imageId},context,info) => {
+        deleteCarPhoto: async (parent,{carId,imageId},context,info) => {   
             const user = is_authenticated(context);
             if(user){
                 if(user.roles !== 'Dealer') throw new Error('Only delers have permission to delete car photo');
@@ -106,8 +108,11 @@ const CarResolver = {
                 const nullIndex = car.Images.findIndex(el => el === null);
                 car.Images.splice(nullIndex,1);
                 await car.save({validateBeforeSave:false});
-                console.log("deletion happened successfully");     
+                console.log("delete happened successfully");     
             }
+        },
+        deleteCar:async (_,{carId},context,info) => {  
+                await Car.findByIdAndDelete(carId);                
         }
     },
     Subscription:{

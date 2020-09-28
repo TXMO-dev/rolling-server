@@ -9,7 +9,7 @@ app.use(hpp());
 const typeDefs = gql`
    
     type File{
-        #id:ID!
+        id:ID!
         filename:String,
         mimetype:String,
         path:String,
@@ -39,6 +39,9 @@ const typeDefs = gql`
         verified:Boolean!
         license_check:Boolean!
         license_send:Boolean!
+        followingCount:Float!
+        followerCount:Float!
+
     }
 
     type Star{
@@ -48,8 +51,9 @@ const typeDefs = gql`
     }
 
     type Review{
-        id:ID! 
+        review_id:String! 
         username:String!
+        user_image:String!  
         body:String!
         createdAt:String!
     }
@@ -131,14 +135,15 @@ const typeDefs = gql`
         updateMyPassword(updateInput:UpdateInput): User 
         updateMyProfile(profileUpdate:ProfileUpdate): User
         updatePhoto(file: Upload!): File #now this upload returns an object of {createReadStream,filename,mimetype,encoded}
-        createCar(carDetails:CarDetails): Car
+        createCar(carDetails:CarDetails): Car!
         createCarPhoto(Image: Upload!,id:String!): File    
         deleteCarPhoto(carId:String!,imageId:String!): Car
         createReview(carId:String!,body:String!): [Review]
         deleteReview(carId:String!,reviewId:String!): [Review] 
         updateReview(carId:String!,reviewId:String!,body:String!): Review 
-        createLike(carId:ID!): [Like] 
+        createLike(carId:String!): [Like]!
         createFollow(userId:String!): [User]
+        deleteCar(carId:String!):Car
          
     }
 

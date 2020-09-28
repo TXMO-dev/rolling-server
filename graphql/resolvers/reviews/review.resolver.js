@@ -1,5 +1,6 @@
 const is_authenticated = require('./../../../utils/authHandler');
 const Car = require('./../../../models/carModel');
+const shortid = require('shortid');
 const { UserInputError } = require('apollo-server');
 const reviewResolver = {
     Mutation:{
@@ -11,8 +12,11 @@ const reviewResolver = {
                     throw new UserInputError('this post no longer exists.');
                 }
                 const reviewObj = {
+                    review_id:shortid.generate(),
                     username:car.dealer,
-                    body
+                    user_image:car.dealer_image,   
+                    body,
+                    createdAt:Date.now().toString()
                 }
                 //FIXME: I have to make sure that the user does not post a review twice....
                 //SOLUTION:find a way of getting the username to show or populate into the database...
@@ -24,8 +28,7 @@ const reviewResolver = {
 
                     car.reviews = [reviewObj,...car.reviews];
                     car.reviewCount = car.reviews.length;
-                
-                await car.save();
+                    await car.save({validateBeforeSave:false});
                 context.pubsub.publish('NEW_REVIEW_COUNT',{newReviewCount:car})
                 return car.reviews; //IT IS WORKING
             }
@@ -42,6 +45,10 @@ const reviewResolver = {
                 const carIndex = car.reviews.findIndex(reviewObj => reviewObj === obj_keys)
                 car.reviews.splice(carIndex,1);
                 car.reviewCount = car.reviews.length;
+                if(car.reviews.find(carreviewobj => carreviewobj.username !== user.username)){
+                    car.reviewCount = car.reviews.length;
+                    await car.save();   
+                }
                 await car.save({validateBeforeSave:false});
                 return car.reviews; //IT IS WORKING
             }
@@ -54,13 +61,13 @@ const reviewResolver = {
             if(user){
                 const car = await Car.findById(carId);
                 const real_car = car.reviews.reduce((accumulator,currentObj) => {
-                    accumulator[currentObj._id] = currentObj;
+                    accumulator[currentObj.review_id] = currentObj;   
                     return accumulator;
-                },{});
+                },{});   
                 const obj_keys = real_car[reviewId];
-                obj_keys.body = body;
+                obj_keys.body = body;   
                 await car.save({validateBeforeSave:false});
-                return obj_keys //IT IS WORKING NOW
+                return obj_keys //IT IS WORKING NOW  
             }
         },
 

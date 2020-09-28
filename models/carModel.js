@@ -16,8 +16,9 @@ const carSchema = new Schema({
         {
             id:String,
             username:String,
+            user_image:String,
             body:String,
-            generated_id:String,
+            review_id:String,
             createdAt:String,
             
         }
@@ -42,6 +43,7 @@ const carSchema = new Schema({
 
     Images:[  
         {
+            id:String,
             name:String,  
             filename:String,
             mimetype:String,

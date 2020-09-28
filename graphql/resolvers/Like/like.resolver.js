@@ -32,7 +32,6 @@ const LikeResolver = {
                 if(car.likes.find(c => c.username === user.username )){
                     car.likes = car.likes.filter(carObj => carObj.username !== user.username);
                     car.likeCount = car.likes.length;
-                   
                     await car.save({validateBeforeSave:false}); 
                     return[...car.likes];
                 }else {

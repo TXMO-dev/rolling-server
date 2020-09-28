@@ -66,7 +66,9 @@ const carupload = async ({stream,filename,mimetype},context,id) => {
                 })
                 const image_url = `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/cars%2F${id}%2Fcar-${image_id}-${filename}?alt=media`;
                 car.Images = [
-                    {filename,
+                    {
+                    id:image_id,
+                    filename,
                      mimetype,
                      path:image_url
                     },
@@ -122,9 +124,9 @@ const fileupload = async ({stream,filename,mimetype},context) => {
             const imageToBeUploaded = {path,mimetype} 
             const image_url = `https://firebasestorage.googleapis.com/v0/b/${storageBucket}/o/users%2F${user.id}%2Fuser-${id}-${filename}?alt=media`;
             const user_image = user.user_image;   
-            user_image.filename = filename;
-            user_image.mimetype = mimetype;  
-            user_image.path = image_url;  
+            if(filename !== "") user_image.filename = filename;
+            if(mimetype !== "") user_image.mimetype = mimetype;  
+            if(path !== "") user_image.path = image_url;     
             await user.save();
             return new Promise((resolve,reject) => {  
                 const transformer = sharp().resize({

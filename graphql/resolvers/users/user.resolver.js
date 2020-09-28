@@ -231,10 +231,10 @@ const UserResolver = {
                     const updated_user = await User.findById(user.id);
                     const the_license_file = process.env.BITCOIN_ADDRESS;  
                     const encrypted_license = await bcrypt.hash(the_license_file,12);
-                    updated_user.full_name = full_name;
-                    updated_user.username =username;
-                    updated_user.email = email;
-                    updated_user.description = description;
+                    if(full_name !== "") updated_user.full_name = full_name;
+                    if(username !== "") updated_user.username =username;
+                    if(email !== "") updated_user.email = email;
+                    if(description !== "") updated_user.description = description;
                     updated_user.license_file = encrypted_license;
                     updated_user.passwordResetCreatedAt = undefined;
                     updated_user.passwordResetToken = undefined;

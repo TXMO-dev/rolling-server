@@ -36,8 +36,14 @@ const userSchema = new Schema({
         }
     ],
     //Followers will be a query...
-    followingCount:Number,
-    followerCount:Number, 
+    followingCount:{
+        type:Number,
+        default:0
+    },
+    followerCount:{
+       type: Number,
+       default:0
+    },
     tags:[String],
     passwordResetToken:String,
     passwordResetCreatedAt:String,
