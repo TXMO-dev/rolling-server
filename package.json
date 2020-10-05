@@ -1,6 +1,9 @@
 {
   "name": "rolling_server",
   "version": "1.0.0",
+  "engines":{
+    "node":"12.x"
+  },
   "description": "This is the graphql server for my application",
   "main": "server.js",
   "scripts": {
