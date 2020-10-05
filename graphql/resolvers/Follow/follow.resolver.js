@@ -10,10 +10,15 @@ const FollowResolver = {
                 auth_user.followerCount = followers.length;
                 await auth_user.save();
                 context.pubsub.publish('NEW_FOLLOWER',{newFollowerCount:auth_user})
-                return followers; //ITS RETURNING
-                  
-            
+                return followers; //ITS RETURNING             
+        },
+        following:async (parent,args,context,info) => {
+            const auth_user = await is_authenticated(context);
+            const user = await User.findById(auth_user.id);   
+            const {following} = user;
+            return following;
                 
+            
         }
 
     },
@@ -26,20 +31,20 @@ const FollowResolver = {
 
                 if(auth_user.following.find(currentObj => currentObj.username === found_user.username )){
                     auth_user.following = auth_user.following.filter(c => c.username !== found_user.username);
-                    await auth_user.save();   
+                    auth_user.followingCount = auth_user.following.length;
+                    await auth_user.save({validateBeforeSave:false});   
                 }else{
                     auth_user.following.unshift({
                         username:found_user.username,
-                        user_image:found_user.user_image,   
-                        description:found_user.description,
+                        user_image:{...found_user.user_image},        
+                        description:found_user.description,  
                         createdAt:Date.now().toString()   
-
                     });
-                    auth_user.followingCount = auth_user.following.length;
-                    await auth_user.save();
+                        auth_user.followingCount = auth_user.following.length;
+                        await auth_user.save({validateBeforeSave:false});  
                 }
                 context.pubsub.publish('NEW_FOLLOWING',{newFollowing:auth_user.following});   
-                return auth_user.following; //IT IS WORKING
+                return auth_user.following; //IT IS WORKING   
             }
         }
     },

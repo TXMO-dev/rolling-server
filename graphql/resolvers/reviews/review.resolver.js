@@ -45,6 +45,7 @@ const reviewResolver = {
                 const carIndex = car.reviews.findIndex(reviewObj => reviewObj === obj_keys)
                 car.reviews.splice(carIndex,1);
                 car.reviewCount = car.reviews.length;
+                await car.save();
                 if(car.reviews.find(carreviewobj => carreviewobj.username !== user.username)){
                     car.reviewCount = car.reviews.length;
                     await car.save();   

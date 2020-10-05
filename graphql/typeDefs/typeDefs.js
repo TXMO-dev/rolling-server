@@ -77,6 +77,7 @@ const typeDefs = gql`
         Images:[File]!  
         deal:String!
         dealer_image:String! 
+        dealer_email:String!
         dealer_id:String! 
         reviewCount:Int!
         likeCount:Int!
@@ -154,6 +155,7 @@ const typeDefs = gql`
         files:[File!]
         getPhoto(photoId:String!): File 
         followers: [User]
+        following: [User]   
         usersOfLikedPost(carId:String!): [User]
         getUserByTags: [User] #this will be used for recommendations 
         getCars: [Car]

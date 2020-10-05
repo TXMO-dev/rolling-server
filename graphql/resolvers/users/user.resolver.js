@@ -10,7 +10,8 @@ const authenticated_user = require('./../../../utils/authHandler');
 const reset_util = require('./../../../utils/reset_util');
 const {processing} = require('./../../../utils/sendAndProcess');
 const is_authenticated = require('./../../../utils/authHandler');
-const config = require('./../../../firebase/firebase.config')
+const config = require('./../../../firebase/firebase.config');
+const Car = require('./../../../models/carModel');
 
 
 
@@ -193,9 +194,17 @@ const UserResolver = {
 
         deleteAccount: async (parents,args,context,info) => {
             const user = await authenticated_user(context);
+            const car = await Car.find();
+            const the_car = await Car.findOne({dealer_id:user.id})
+            
             if(user.active === true){  
                 user.active = false;
-                await user.save();   
+                if(car.forEach(carObj => (carObj.active === true) && (carObj.dealer === user.username) )){
+                    the_car.active = false;
+                }
+            
+                await user.save(); 
+                await car.save();  
             }
         },
         updateMyPassword: async (parent,{updateInput:{current_password,new_password,confirm_new_password}},context,info) => {

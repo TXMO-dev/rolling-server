@@ -10,7 +10,8 @@ const shortid = require('shortid')
 const CarResolver = {
     Query:{
         getCars:async (parent,args,context,info) => {
-            const auth_user = is_authenticated(context);   
+            const auth_user = is_authenticated(context); 
+            //const car = await Car.findOne({dealer:auth_user.username})        
             if(auth_user){
                 const all_cars = await Car.find().sort('-createdAt');  
                 context.pubsub.publish('CAR_FEED',{getAllCarFeed:all_cars});
@@ -47,6 +48,7 @@ const CarResolver = {
                     condition,      
                     deal,
                     dealer_id:user.id,
+                    dealer_email:user.email,  
                     dealer:user.username,
                     dealer_image:user.user_image.path,   
                     Images:[

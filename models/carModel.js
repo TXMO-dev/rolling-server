@@ -56,6 +56,7 @@ const carSchema = new Schema({
         ref:'User'
     },
     dealer_id:String,
+    dealer_email:String,
     likeCount:{
         type:Number,
         default:0
@@ -63,6 +64,10 @@ const carSchema = new Schema({
     reviewCount:{
         type:Number,
         default:0
+    },
+    active:{
+        type:Boolean,
+        default:true  
     },
     createdAt:{
         type:Date,
