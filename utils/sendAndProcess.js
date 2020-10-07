@@ -2,7 +2,6 @@ const is_authenticated = require('./authHandler');
 const {createWriteStream} = require('fs');
 const shortid = require('shortid');
 const { UserInputError } = require('apollo-server');
-const sharp = require('sharp');
 const Car = require('./../models/carModel');
 const admin = require('firebase-admin');
 const { storageBucket } = require('./../firebase/firebase.config');
@@ -76,16 +75,9 @@ const carupload = async ({stream,filename,mimetype},context,id) => {
                 ];    
                 await car.save();
                 console.log(car);
-                return new Promise((resolve,reject) => {  
-                    const transformer = sharp().resize({
-                        width:600,
-                        height:600,
-                        fit:sharp.fit.cover,
-                        position:sharp.strategy.entropy
-                    });  
+                return new Promise((resolve,reject) => {    
     
                     stream
-                    .pipe(transformer)//we are resizing before uploading to path
                     .pipe(createWriteStream(path))
                     .on("finish",() => resolve(admin.storage().bucket().upload(imageToBeUploaded.path,{
                         resumable:false,
@@ -128,16 +120,9 @@ const fileupload = async ({stream,filename,mimetype},context) => {
             if(mimetype !== "") user_image.mimetype = mimetype;  
             if(path !== "") user_image.path = image_url;     
             await user.save();
-            return new Promise((resolve,reject) => {  
-                const transformer = sharp().resize({
-                    width:200,
-                    height:200,
-                    fit:sharp.fit.cover,
-                    position:sharp.strategy.entropy
-                });  
+            return new Promise((resolve,reject) => {   
 
                 stream
-                .pipe(transformer)//we are resizing before uploading to path
                 .pipe(createWriteStream(path))
                 .on("finish",() => resolve( admin.storage().bucket().upload(imageToBeUploaded.path,{
                     resumable:false,
